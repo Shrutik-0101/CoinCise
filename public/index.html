@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>CoinCise – Financial Helper</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div id="chat">
+        <h1>CoinCise</h1>
+        <p>Ask a financial question:</p>
+
+        <textarea id="question"></textarea>
+        <br />
+        <button onclick="ask()">Ask</button>
+
+        <div class="msg answer" id="answer"></div>
+    </div>
+
+    <script>
+        async function ask() {
+            const question = document.getElementById("question").value;
+            const answerBox = document.getElementById("answer");
+
+            answerBox.textContent = "Breaking Through the barriers...";
+
+            try {
+                const res = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question })
+                });
+
+                const data = await res.json();
+
+                if (data.answer) {
+                    answerBox.textContent = data.answer;
+                } else if (data.error) {
+                    answerBox.textContent = "Server error: " + data.error;
+                } else {
+                    answerBox.textContent = "No response received.";
+                }
+            } catch (err) {
+                answerBox.textContent = "Network error.";
+                console.error(err);
+            }
+        }
+    </script>
+
+
+</body>
+
+</html>
